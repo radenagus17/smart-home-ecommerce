@@ -50,7 +50,7 @@ const Category = () => {
           {category.map((item) => {
             const { id, name } = item;
             return (
-              <button className="py-2 px-3 border" key={id}>
+              <button className="py-2 px-3 border hover:outline-none hover:border-transparent hover:ring-1 hover:ring-orange-400 hover:text-orange-400 transition duration-300" key={id}>
                 {name}
               </button>
             );

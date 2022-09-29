@@ -1,11 +1,26 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoSearchOutline } from "react-icons/io5";
 import { BsCartCheck } from "react-icons/bs";
+import Link from "next/link";
+import Cookies from "js-cookie";
 
 const Nav = () => {
   const [open, setOpen] = useState(false);
+
+  const [user, setUser] = useState(undefined);
+
+  useEffect(() => {
+    if (Cookies.get("user") !== undefined) setUser(Cookies.get("user"));
+  }, [user, setUser]);
+
+  const handleLogout = () => {
+    Cookies.remove("user");
+    Cookies.remove("token-user");
+    window.location = "/";
+  };
+
   return (
     <div className="shadow-md w-full fixed top-0 left-0 z-50">
       <div className="md:flex flex items-center justify-between bg-white py-4 px-5 md:px-10">
@@ -25,21 +40,37 @@ const Nav = () => {
               <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
                 <IoSearchOutline />
               </div>
-              <input type="text" className="block p-2 pl-10 md:w-[700px] w-[420px] text-gray-900 bg-gray-100 rounded-lg focus:border-orange-400 focus:border focus:ring-1 focus:ring-orange-400 border-0" placeholder="Search..." />
+              <input type="text" className="block p-2 pl-10 md:w-[700px] w-[420px] text-gray-900 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent border-0" placeholder="Search..." />
             </div>
           </li>
           <li className="flex md:hidden">
             <div className="cursor-pointer text-2xl px-4 py-2 text-gray-600 hover:text-orange-400 mr-3">
               <BsCartCheck />
             </div>
-            <button className="py-2 px-4 bg-orange-400 hover:ring-2 hover:ring-orange-400 hover:bg-white hover:text-orange-400 transition rounded-full text-white">Login</button>
+            {!user ? (
+              <Link href="/auth/user-login">
+                <button className="py-2 px-4 bg-orange-400 hover:ring-2 hover:ring-orange-400 hover:bg-white hover:text-orange-400 transition rounded-full text-white">Login</button>
+              </Link>
+            ) : (
+              <button onClick={handleLogout} className="py-2 px-4 bg-orange-400 hover:ring-2 hover:ring-orange-400 hover:bg-white hover:text-orange-400 transition rounded-full text-white">
+                Logout
+              </button>
+            )}
           </li>
         </ul>
         <div className="hidden md:flex items-center">
           <div className="cursor-pointer text-2xl px-4 py-2 text-gray-600 hover:text-orange-400 mr-4 border-r-2 border-r-gray-300">
             <BsCartCheck />
           </div>
-          <button className="py-2 px-4 bg-orange-400 hover:ring-2 hover:ring-orange-400 hover:bg-white hover:text-orange-400 transition rounded-full text-white">Login</button>
+          {!user ? (
+            <Link href="/auth/user-login">
+              <button className="py-2 px-4 bg-orange-400 hover:ring-2 hover:ring-orange-400 hover:bg-white hover:text-orange-400 transition rounded-full text-white">Login</button>
+            </Link>
+          ) : (
+            <button onClick={handleLogout} className="py-2 px-4 bg-orange-400 hover:ring-2 hover:ring-orange-400 hover:bg-white hover:text-orange-400 transition rounded-full text-white">
+              Logout
+            </button>
+          )}
         </div>
       </div>
     </div>

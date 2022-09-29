@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 const Hero = () => {
   return (
@@ -17,11 +18,11 @@ const Hero = () => {
         {/* image */}
         <div className="flex flex-col items-center">
           <div className="relative md:mt-0 mt-8">
-            <div className="absolute md:-top-8 -top-6 md:right-32 right-20 bg-orange-400 md:py-8 md:px-8 py-6 px-6 text-sm md:text-base rounded-full text-white uppercase">
+            <div className="absolute z-20 md:-top-8 -top-6 md:right-5 right-8 bg-orange-400 md:py-8 md:px-8 py-7 px-7 text-base rounded-full text-white uppercase">
               Learn
               <br /> More
             </div>
-            <img src="/appleHomePod.png" alt="apple" className="w-2/3 mx-auto" />
+            <Image width={380} height={380} layout="intrinsic" objectFit="cover" src="/appleHomePod.png" alt="homePod" />
           </div>
           <div>
             <h2 className="text-3xl font-medium text-gray-800">Apple Homepod</h2>
