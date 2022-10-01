@@ -14,8 +14,8 @@ const Card = ({ data }) => {
 
   return (
     <div className="relative border border-gray-100 " style={{ width: "300px" }}>
-      <div className="relative object-cover w-full h-56">
-        <Image height={100} width={100} layout="fill" objectFit="cover" quality={80} src={`/api/imageproxy?url=${encodeURIComponent(image_url)}`} alt="Flowbite Logo" />
+      <div className="relative object-cover w-full h-56 z-0">
+        <Image layout="fill" objectFit="cover" quality={80} src={`/api/imageproxy?url=${encodeURIComponent(image_url)}`} alt="Flowbite Logo" />
       </div>
       <div className="p-6">
         <small>
