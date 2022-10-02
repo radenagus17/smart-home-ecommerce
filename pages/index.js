@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Layout from "../widget/Layout";
 import { Category, Product, Card, RecomendedProduct, ButtonSpinner } from "../components";
+import { GlobalContext } from "../context/GlobalContext";
+import axios from "axios";
 
 export async function getServerSideProps() {
   let res = await fetch("http://service-example.sanbercloud.com/api/product");
@@ -26,17 +28,32 @@ export default function Home({ Prod, categ }) {
   const [dataProduct, setDataProduct] = useState(Prod);
   const [dataCategory, setDataCategory] = useState(categ);
   const [limit, setLimit] = useState(5);
+  const { state } = useContext(GlobalContext);
+  const { fetchStatus, setFetchStatus } = state;
 
   const [displaySpinner, setDisplaySpinner] = useState(false);
   const [idxRandom, setIdxRandom] = useState(null);
 
   useEffect(() => {
+    let fetchData = async () => {
+      try {
+        const res = await axios.get("https://service-example.sanbercloud.com/api/product");
+        setDataProduct(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    if (fetchStatus) {
+      fetchData();
+      setFetchStatus(false);
+    }
+
     if (Prod !== null) {
       let filter = Prod.filter((res) => res.available === 1);
       let random = Math.floor(Math.random() * filter.length);
       setIdxRandom(random);
     }
-  }, [Prod]);
+  }, [Prod, fetchStatus, setFetchStatus]);
 
   const handleCounterFilter = () => {
     setDisplaySpinner(true);

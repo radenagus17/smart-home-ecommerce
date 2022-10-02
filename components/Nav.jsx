@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoSearchOutline } from "react-icons/io5";
@@ -8,11 +8,15 @@ import Link from "next/link";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { useRouter } from "next/router";
+import { GlobalContext } from "../context/GlobalContext";
 
 const Nav = () => {
   const [open, setOpen] = useState(false);
 
-  const [user, setUser] = useState(undefined);
+  // const [user, setUser] = useState(undefined);
+  const { state, handleFunction } = useContext(GlobalContext);
+  let { user, setUser, fetchCheckoutStatus, setFetchCheckoutStatus, getCheckoutUser } = state;
+  let { fetchCheckoutUser } = handleFunction;
 
   const [displaySearch, setDisplaySearch] = useState(false);
   const [search, setSearch] = useState("");
@@ -21,8 +25,19 @@ const Nav = () => {
   const router = useRouter();
 
   useEffect(() => {
-    if (Cookies.get("user") !== undefined) setUser(Cookies.get("user"));
-  }, [search, setSearch]);
+    if (Cookies.get("token-user") !== undefined) {
+      if (user == undefined) {
+        setUser(JSON.parse(Cookies.get("user")));
+      }
+    }
+
+    if (user !== undefined) {
+      if (fetchCheckoutStatus) {
+        fetchCheckoutUser();
+        setFetchCheckoutStatus(false);
+      }
+    }
+  }, [search, setSearch, user, setUser, fetchCheckoutStatus, setFetchCheckoutStatus, fetchCheckoutUser]);
 
   const handleOnSearch = (e) => {
     setDisplaySearch(true);
@@ -56,7 +71,7 @@ const Nav = () => {
           </a>
         </div>
         <ul
-          className={`flex md:flex-row flex-col items-center md:pb-0 pb-5 md:static absolute bg-gray-300 md:bg-white md:z-auto z-[-1] left-0 md:max-w-md w-full justify-center transition-all duration-500 ease-in ${
+          className={`flex md:flex-row flex-col items-center md:pb-0 pb-5 md:static absolute bg-gray-200 md:bg-white md:z-auto z-[-1] left-0 md:max-w-md w-full justify-center transition-all duration-500 ease-in ${
             open ? "top-16 bg-opacity-80" : "top-[-490px] opacity-0 md:opacity-80"
           }`}
         >
@@ -95,9 +110,10 @@ const Nav = () => {
             </div>
           </li>
           <li className="flex md:hidden w-[420px] justify-start">
-            <div className="cursor-pointer text-2xl px-4 py-2 text-gray-600 hover:text-orange-400 mr-3">
+            <a onClick={() => router.push("/user/checkout")} className="text-2xl relative px-4 py-2 text-gray-600 hover:text-orange-400 mr-3">
+              <div className={`${!getCheckoutUser ? "invisible" : "visible"} text-[11px] leading-3 bg-red-600 text-white absolute rounded-full py-1 px-1 -top-1 right-1`}>{getCheckoutUser}</div>
               <BsCartCheck />
-            </div>
+            </a>
             {!user ? (
               <Link href="/auth/user-login">
                 <button className="py-2 px-4 bg-orange-400 hover:ring-2 hover:ring-orange-400 hover:bg-white hover:text-orange-400 transition rounded-full text-white">Login</button>
@@ -110,7 +126,8 @@ const Nav = () => {
           </li>
         </ul>
         <div className="hidden md:flex items-center">
-          <a className="text-2xl px-4 py-2 text-gray-600 hover:text-orange-400 mr-4 border-r-2 border-r-gray-300">
+          <a onClick={() => router.push("/user/checkout")} className="text-2xl relative px-4 py-2 text-gray-600 hover:text-orange-400 mr-4 border-r-2 border-r-gray-300">
+            <div className={`${!getCheckoutUser ? "invisible" : "visible"} text-[11px] leading-3 bg-red-600 transition-all text-white absolute rounded-full py-1 px-1 -top-1 right-1`}>{getCheckoutUser}</div>
             <BsCartCheck />
           </a>
           {!user ? (
