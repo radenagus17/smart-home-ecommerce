@@ -34,7 +34,10 @@ const GlobalProvider = ({ children }) => {
           Authorization: "Bearer" + Cookies.get("token-user"),
         },
       });
-      setGetCheckoutUser(data.length);
+
+      let result = data.filter((res) => res.is_transaction === 0);
+
+      setGetCheckoutUser(result.length);
       setDataCheckoutUser(data);
     } catch (error) {
       console.log(error);
