@@ -15,7 +15,7 @@ const Nav = () => {
 
   // const [user, setUser] = useState(undefined);
   const { state, handleFunction } = useContext(GlobalContext);
-  let { user, setUser, fetchCheckoutStatus, setFetchCheckoutStatus, getCheckoutUser, dataCheckoutUser } = state;
+  let { user, setUser, fetchCheckoutStatus, setFetchCheckoutStatus, getCheckoutUser, setFetchTransactionStatus } = state;
   let { fetchCheckoutUser } = handleFunction;
 
   const [displaySearch, setDisplaySearch] = useState(false);
@@ -32,6 +32,7 @@ const Nav = () => {
     }
 
     if (user !== undefined) {
+      // setFetchTransactionStatus(true);
       if (fetchCheckoutStatus) {
         fetchCheckoutUser();
         setFetchCheckoutStatus(false);
@@ -43,13 +44,16 @@ const Nav = () => {
     setDisplaySearch(true);
     setSearch(e.target.value);
     if (search !== "") {
-      axios.get("http://service-example.sanbercloud.com/api/product").then((res) => {
-        let data = res.data.filter((x) => x.available !== 0);
-        let searchData = data.filter((x) => {
-          return Object.values(x).join(" ").toLowerCase().includes(e.target.value.toLowerCase());
-        });
-        setDataSearch(searchData);
-      });
+      axios
+        .get("http://service-example.sanbercloud.com/api/product")
+        .then((res) => {
+          let data = res.data.filter((x) => x.available !== 0);
+          let searchData = data.filter((x) => {
+            return Object.values(x).join(" ").toLowerCase().includes(e.target.value.toLowerCase());
+          });
+          setDataSearch(searchData);
+        })
+        .catch((err) => alert(err));
     }
   };
 
@@ -111,7 +115,7 @@ const Nav = () => {
           </li>
           <li className="flex md:hidden w-[420px] justify-start">
             <a onClick={() => router.push("/user/checkout")} className="text-2xl relative px-4 py-2 text-gray-600 hover:text-orange-400 mr-3">
-              <div className={`${!getCheckoutUser ? "invisible" : "visible"} text-[11px] leading-3 bg-red-600 text-white absolute rounded-full py-1 px-1 -top-1 right-1`}>{getCheckoutUser}</div>
+              <div className={`${!fetchCheckoutStatus ? "invisible" : "visible"} text-[11px] leading-3 bg-red-600 text-white absolute rounded-full py-1 px-1 -top-1 right-1`}>{getCheckoutUser}</div>
               <BsCartCheck />
             </a>
             {!user ? (
@@ -120,11 +124,9 @@ const Nav = () => {
               </Link>
             ) : (
               <>
-                {dataCheckoutUser !== null && dataCheckoutUser.length !== 0 && (
-                  <a onClick={() => router.push("/user/transaction")} className="text-2xl px-4 py-2 text-gray-600 hover:text-orange-400 -ml-3 mr-4">
-                    <BsCardChecklist />
-                  </a>
-                )}
+                <a onClick={() => router.push("/user/transaction")} className="text-2xl px-4 py-2 text-gray-600 hover:text-orange-400 -ml-3 mr-4">
+                  <BsCardChecklist />
+                </a>
                 <button onClick={handleLogout} className="py-2 px-4 bg-orange-400 hover:ring-2 hover:ring-orange-400 hover:bg-white hover:text-orange-400 transition rounded-full text-white">
                   Logout
                 </button>
@@ -143,11 +145,9 @@ const Nav = () => {
             </Link>
           ) : (
             <>
-              {dataCheckoutUser !== null && dataCheckoutUser.length !== 0 && (
-                <a onClick={() => router.push("/user/transaction")} className="text-2xl px-4 py-2 text-gray-600 hover:text-orange-400 -ml-3 mr-4">
-                  <BsCardChecklist />
-                </a>
-              )}
+              <a onClick={() => router.push("/user/transaction")} className="text-2xl px-4 py-2 text-gray-600 hover:text-orange-400 -ml-3 mr-4">
+                <BsCardChecklist />
+              </a>
               <button onClick={handleLogout} className="py-2 px-4 bg-orange-400 hover:ring-2 hover:ring-orange-400 hover:bg-white hover:text-orange-400 transition rounded-full text-white">
                 Logout
               </button>

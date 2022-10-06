@@ -12,7 +12,7 @@ const Transaction = () => {
   //   data
   const [data, setData] = useState(null);
 
-  //   indikator
+  // indikator
   const [fetchTransactionStatus, setFetchTransactionStatus] = useState(true);
 
   useEffect(() => {
@@ -33,7 +33,7 @@ const Transaction = () => {
           .then((res) => {
             setData(res.data);
           })
-          .catch((err) => console.log(err));
+          .catch((err) => alert(err));
         setFetchTransactionStatus(false);
       }
     }

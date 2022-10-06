@@ -15,15 +15,19 @@ const Login = () => {
   const handleOnSubmit = async (e) => {
     e.preventDefault();
 
-    let res = await axios.post("https://service-example.sanbercloud.com/api/login", { email: input.email, password: input.password });
+    try {
+      let res = await axios.post("https://service-example.sanbercloud.com/api/login", { email: input.email, password: input.password });
 
-    let { token, user } = res.data;
-    let decode = jwtDecode(token);
+      let { token, user } = res.data;
+      let decode = jwtDecode(token);
 
-    if (decode.role !== "admin") {
-      Cookies.set("token-user", token, { expires: 1 });
-      Cookies.set("user", JSON.stringify(user), { expires: 1 });
-      window.location = "/";
+      if (decode.role !== "admin") {
+        Cookies.set("token-user", token, { expires: 1 });
+        Cookies.set("user", JSON.stringify(user), { expires: 1 });
+        window.location = "/";
+      } else alert("Akun kamu bukan user");
+    } catch (error) {
+      alert(error);
     }
   };
 

@@ -48,7 +48,8 @@ const ListCheckout = () => {
           });
         }
       } catch (error) {
-        console.log(error);
+        setInput({ ...input, message: "Tidak ada checkout" });
+        alert(error);
       }
     };
 
@@ -67,8 +68,12 @@ const ListCheckout = () => {
     }
 
     const getBank = async () => {
-      let { data } = await axios.get("https://service-example.sanbercloud.com/api/bank");
-      setBank(data);
+      try {
+        let { data } = await axios.get("https://service-example.sanbercloud.com/api/bank");
+        setBank(data);
+      } catch (error) {
+        alert(error);
+      }
     };
 
     if (fetchBankStatus) {
@@ -103,6 +108,7 @@ const ListCheckout = () => {
               alert(error.text);
             }
           );
+          setFetchCheckoutStatus(true);
           router.push("/");
         })
         .catch((err) => {

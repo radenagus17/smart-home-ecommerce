@@ -49,7 +49,7 @@ const Card = ({ data }) => {
           setFetchStatus(true);
           setFetchCheckoutStatus(true);
         } catch (error) {
-          console.log(error);
+          alert(error);
         }
       };
       postCheckout();

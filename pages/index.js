@@ -5,23 +5,29 @@ import { GlobalContext } from "../context/GlobalContext";
 import axios from "axios";
 
 export async function getServerSideProps() {
-  let res = await fetch("http://service-example.sanbercloud.com/api/product");
-  let Prod = await res.json();
-  let res1 = await fetch("http://service-example.sanbercloud.com/api/category");
-  let categ = await res1.json();
+  try {
+    let res = await fetch("http://service-example.sanbercloud.com/api/product");
+    let Prod = await res.json();
+    let res1 = await fetch("http://service-example.sanbercloud.com/api/category");
+    let categ = await res1.json();
 
-  if (!Prod || !categ) {
+    // if (!Prod || !categ) {
+    //   return {
+    //     notFound: true,
+    //   };
+    // }
+
     return {
-      notFound: true,
+      props: {
+        Prod,
+        categ,
+      },
+    };
+  } catch (error) {
+    return {
+      props: {},
     };
   }
-
-  return {
-    props: {
-      Prod,
-      categ,
-    },
-  };
 }
 
 export default function Home({ Prod, categ }) {
@@ -29,7 +35,7 @@ export default function Home({ Prod, categ }) {
   const [dataCategory, setDataCategory] = useState(categ);
   const [limit, setLimit] = useState(5);
   const { state } = useContext(GlobalContext);
-  const { fetchStatus, setFetchStatus } = state;
+  const { fetchStatus, setFetchStatus, setFetchTransactionStatus } = state;
 
   const [displaySpinner, setDisplaySpinner] = useState(false);
   const [idxRandom, setIdxRandom] = useState(null);
@@ -40,15 +46,16 @@ export default function Home({ Prod, categ }) {
         const res = await axios.get("https://service-example.sanbercloud.com/api/product");
         setDataProduct(res.data);
       } catch (error) {
-        console.log(error);
+        alert(error);
       }
     };
     if (fetchStatus) {
       fetchData();
+      // setFetchTransactionStatus(true);
       setFetchStatus(false);
     }
 
-    if (Prod !== null) {
+    if (Prod !== undefined) {
       let filter = Prod.filter((res) => res.available === 1);
       let random = Math.floor(Math.random() * filter.length);
       setIdxRandom(random);
@@ -63,8 +70,8 @@ export default function Home({ Prod, categ }) {
     }, 1000);
   };
 
-  return (
-    <>
+  try {
+    return (
       <Layout home>
         <Category data={dataCategory} />;
         <Product>
@@ -83,6 +90,8 @@ export default function Home({ Prod, categ }) {
         </Product>
         <ButtonSpinner handleCounterFilter={handleCounterFilter} displaySpinner={displaySpinner} />
       </Layout>
-    </>
-  );
+    );
+  } catch (error) {
+    return <p className="p-5">Error API Connection...</p>;
+  }
 }

@@ -14,10 +14,13 @@ const Register = () => {
 
   const handleOnSubmit = async (e) => {
     e.preventDefault();
+    try {
+      await axios.post("https://service-example.sanbercloud.com/api/register", { name: input.user, email: input.email, image_url: input.image_url, password: input.password });
 
-    await axios.post("https://service-example.sanbercloud.com/api/register", { name: input.user, email: input.email, image_url: input.image_url, password: input.password });
-
-    window.location = "/auth/user-login";
+      window.location = "/auth/user-login";
+    } catch (error) {
+      alert(error);
+    }
   };
 
   return (

@@ -11,38 +11,39 @@ const DetailProduct = () => {
 
   const [dataProduct, setDataProduct] = useState(null);
   const { state, handleFunction } = useContext(GlobalContext);
-  let { user, setUser, fetchStatus, setFetchStatus } = state;
+  let { user, setUser, setFetchCheckoutStatus } = state;
   let { formatRP } = handleFunction;
   let { id } = router.query;
   const [displaySpin, setDisplaySpin] = useState(false);
 
   const [quantity, setQuantity] = useState(1);
 
+  // indikator
+  const [fetchStatus, setFetchStatus] = useState(true);
+  // const [fetchIdStatus, setfetchIdStatus] = useState(true);
+
   const handleQtyMinus = () => quantity > 0 && setQuantity(quantity - 1);
   const handleQtyPlus = () => setQuantity(quantity + 1);
 
   useEffect(() => {
-    let fetchData = async () => {
-      try {
-        const res = await axios.get("https://service-example.sanbercloud.com/api/product");
-        setDataProduct(res.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    if (fetchStatus) {
-      fetchData();
-      setFetchStatus(false);
-    }
-
     if (id !== undefined) {
-      axios.get(`https://service-example.sanbercloud.com/api/product/${id}`).then((res) => {
-        let data = res.data;
-        setDataProduct(data);
-      });
+      if (fetchStatus) {
+        axios
+          .get(`https://service-example.sanbercloud.com/api/product/${id}`)
+          .then((res) => {
+            let data = res.data;
+            // setFetchTransactionStatus(true);
+            setDataProduct(data);
+          })
+          .catch((err) => alert(err));
+        setFetchStatus(false);
+      }
     }
-    if (Cookies.get("user") !== undefined) setUser(Cookies.get("user"));
+    if (Cookies.get("token-user") !== undefined) {
+      if (user === undefined) {
+        setUser(JSON.parse(Cookies.get("user")));
+      }
+    }
   }, [id, user, setUser, fetchStatus, setFetchStatus]);
 
   const handleCheckout = (e) => {
@@ -63,8 +64,9 @@ const DetailProduct = () => {
           );
           setDisplaySpin(false);
           setFetchStatus(true);
+          setFetchCheckoutStatus(true);
         } catch (error) {
-          console.log(error);
+          alert(error);
         }
       };
       postCheckout();

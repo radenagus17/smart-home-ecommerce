@@ -38,9 +38,9 @@ const GlobalProvider = ({ children }) => {
       let result = data.filter((res) => res.is_transaction === 0);
 
       setGetCheckoutUser(result.length);
-      setDataCheckoutUser(data);
+      setDataCheckoutUser(result);
     } catch (error) {
-      console.log(error);
+      alert(error);
     }
   };
 
